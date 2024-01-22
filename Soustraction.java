@@ -1,4 +1,4 @@
-package calculatrice;
+// package calculatrice;
 public class Soustraction extends Operation {
 
     // Constructeur champ à champ

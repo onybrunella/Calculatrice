@@ -1,5 +1,3 @@
-package calculatrice;
-
 public abstract class Expression {
 
     public Expression getOperande1() {

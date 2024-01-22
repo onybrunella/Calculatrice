@@ -1,7 +1,9 @@
-package calculatrice;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CalculatriceGUI extends JFrame {
@@ -15,30 +17,38 @@ public class CalculatriceGUI extends JFrame {
     private double num1, num2;
     private char operator;
 
+    private List<JButton> scientificButtons;
+
     public CalculatriceGUI() {
-        setTitle("Calculatrice");
-        setSize(400, 500);
+        setTitle("Calculatrice - Ony Brunella");
+        setSize(600, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
         setResizable(false);
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
             e.printStackTrace();
-        }        
+        }    
 
         panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 4));
+        panel.setLayout(new GridLayout(6, 4, 10, 10));
+        panel.setBackground(Color.LIGHT_GRAY);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        textField = new JTextField();
-        textField.setFont(new Font("Arial", Font.PLAIN, 36));
-        textField.setHorizontalAlignment(JTextField.RIGHT);
+        textField = new JTextField("0");
+        textField.setFont(new Font("Arial", Font.PLAIN, 20));
+        textField.setHorizontalAlignment(JTextField.CENTER);
+        textField.setPreferredSize(new Dimension(600, 60)); 
+
 
         numberButtons = new JButton[10];
         for (int i = 0; i < 10; i++) {
             numberButtons[i] = new JButton(String.valueOf(i));
             numberButtons[i].setFont(new Font("Arial", Font.PLAIN, 24));
             numberButtons[i].addActionListener(new NumberButtonListener());
+            numberButtons[i].setBackground(Color.WHITE);
         }
 
         functionButtons = new JButton[8];
@@ -63,6 +73,18 @@ public class CalculatriceGUI extends JFrame {
         for (int i = 0; i < 8; i++) {
             functionButtons[i].setFont(new Font("Arial", Font.PLAIN, 24));
             functionButtons[i].addActionListener(new FunctionButtonListener());
+            functionButtons[i].setBackground(Color.GRAY);
+        }
+
+         // Scientific buttons
+        scientificButtons = new ArrayList<>();
+        String[] scientificLabels = {"sin", "cos", "tan", "sqrt", "log", "exp", "π"};
+        for (String label : scientificLabels) {
+            JButton button = new JButton(label);
+            button.setFont(new Font("Arial", Font.PLAIN, 18));
+            button.addActionListener(new ScientificButtonListener());
+            button.setBackground(Color.darkGray);
+            scientificButtons.add(button);
         }
 
         panel.add(textField);
@@ -80,7 +102,12 @@ public class CalculatriceGUI extends JFrame {
         panel.add(functionButtons[3]);
         panel.add(functionButtons[7]);
 
-        add(panel);
+        // Scientific buttons
+        for (JButton button : scientificButtons) {
+            panel.add(button);
+        }
+
+        add(panel, BorderLayout.CENTER); 
         setVisible(true);
     }
 
@@ -155,6 +182,51 @@ public class CalculatriceGUI extends JFrame {
             } else if (e.getSource() == clrButton) {
                 textField.setText("");
             }
+        }
+    }
+
+    // Scientific buttons
+    private class ScientificButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            String command = ((JButton) e.getSource()).getText();
+            double input = Double.parseDouble(textField.getText());
+            double result = 0.0;
+
+            switch (command) {
+                case "sin":
+                    result = Math.sin(input);
+                    break;
+                case "cos":
+                    result = Math.cos(input);
+                    break;
+                case "tan":
+                    result = Math.tan(input);
+                    break;
+                case "sqrt":
+                    if (input >= 0) {
+                        result = Math.sqrt(input);
+                    } else {
+                        textField.setText("Erreur : Racine carrée d'un nombre négatif !");
+                        return;
+                    }
+                    break;
+                case "log":
+                    if (input > 0) {
+                        result = Math.log(input);
+                    } else {
+                        textField.setText("Erreur : Logarithme d'un nombre non positif !");
+                        return;
+                    }
+                    break;
+                case "exp":
+                    result = Math.exp(input);
+                    break;
+                case "π":
+                    result = Math.PI;
+                    break;
+            }
+
+            textField.setText(String.valueOf(result));
         }
     }
 

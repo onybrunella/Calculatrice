@@ -1,4 +1,3 @@
-package calculatrice;
 public class Multiplication extends Operation {
     
     // Constructeur champ à champ
